@@ -65,28 +65,15 @@ WHERE length > (
 
 ### Задание 3
 
-WITH monthly_payments AS (
-    SELECT
-        DATE_TRUNC('month', payment_date) AS month,
-        SUM(amount) AS total_amount
-    FROM payment
-    GROUP BY DATE_TRUNC('month', payment_date)
-),
-monthly_rentals AS (
-    SELECT
-        DATE_TRUNC('month', rental_date) AS month,
-        COUNT(*) AS rental_count
-    FROM rental
-    GROUP BY DATE_TRUNC('month', rental_date)
-)
 SELECT
-    mp.month,
-    mp.total_amount,
-    mr.rental_count
-FROM monthly_payments AS mp
-JOIN monthly_rentals AS mr
-    ON mr.month = mp.month
-ORDER BY mp.total_amount DESC
+    DATE_FORMAT(p.payment_date, '%Y-%m') AS payment_month,
+    SUM(p.amount) AS total_amount,
+    COUNT(DISTINCT r.rental_id) AS rental_count
+FROM payment AS p
+JOIN rental AS r
+    ON r.rental_id = p.rental_id
+GROUP BY DATE_FORMAT(p.payment_date, '%Y-%m')
+ORDER BY total_amount DESC
 LIMIT 1;
 
 Июль 2005 сумма 28 373,89 количество аренд 6 709
